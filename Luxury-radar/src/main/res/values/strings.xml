@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Luxury Radar</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="style_prompt">Choose a style</string>
+    <string name="gender_prompt">Choose gender</string>
+    <string name="title_activity_main">MainActivity</string>
+</resources>
