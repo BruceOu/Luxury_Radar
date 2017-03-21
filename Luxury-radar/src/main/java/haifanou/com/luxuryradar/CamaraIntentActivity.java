@@ -58,7 +58,6 @@ public class CamaraIntentActivity extends Activity implements View.OnClickListen
                 break;
         }
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_camara_intent, menu);
