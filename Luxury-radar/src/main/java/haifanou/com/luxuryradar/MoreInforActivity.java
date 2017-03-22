@@ -3,9 +3,12 @@ package haifanou.com.luxuryradar;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -14,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +29,7 @@ public class MoreInforActivity extends Activity implements View.OnClickListener{
     private String mImageFileLocation;
     private ImageView imageView;
     private Uri imageUri;
+    private Uri uritempFile;
     private Button btnSubmit, btnCrop;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +92,7 @@ public class MoreInforActivity extends Activity implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.submitBtn:
-
+                submitForResult();
                 break;
             case R.id.cropBtn:
                 cropImage();
@@ -106,7 +111,10 @@ public class MoreInforActivity extends Activity implements View.OnClickListener{
             cropIntent.putExtra("scaleUpIfNeeded", true);
             cropIntent.putExtra("aspectX", 3);
             cropIntent.putExtra("aspectY", 4);
-            cropIntent.putExtra("return-data", true);
+
+            uritempFile = Uri.parse("file://" + "/" + Environment.getExternalStorageDirectory().getPath() + "/" + "small.jpg");
+            cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, uritempFile);
+            cropIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
 
             startActivityForResult(cropIntent, CROP_REQUEST);
         }catch (ActivityNotFoundException e){
@@ -116,10 +124,17 @@ public class MoreInforActivity extends Activity implements View.OnClickListener{
 
     protected void onActivityResult (int requestCode, int resultCode, Intent data) {
         if(requestCode == CROP_REQUEST && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            imageView.setImageBitmap(imageBitmap);
+            try {
+                Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uritempFile));
+                imageView.setImageBitmap(bitmap);
+            }catch(FileNotFoundException fe){
+                fe.printStackTrace();
+            }
         }
+    }
+
+    private void submitForResult(){
+
     }
 
 }
