@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".CamaraIntentActivity"
-            android:label="Luxury Radar">
+            android:label="Take or Choose a photo">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
