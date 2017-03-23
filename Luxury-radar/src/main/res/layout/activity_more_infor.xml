@@ -12,6 +12,12 @@
     tools:context="haifanou.com.luxuryradar.MoreInforActivity">
 
     <ImageView
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:background="@drawable/background2"
+        android:alpha="0.2" />
+
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="330dp"
         android:id="@+id/imageGalleryView"

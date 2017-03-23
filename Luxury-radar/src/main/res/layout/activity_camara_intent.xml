@@ -7,6 +7,12 @@
 
 
     <ImageView
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:background="@drawable/background"
+        android:alpha="0.2" />
+
+    <ImageView
         android:layout_width="400dp"
         android:layout_height="400dp"
         android:id="@+id/imageGalleryView"

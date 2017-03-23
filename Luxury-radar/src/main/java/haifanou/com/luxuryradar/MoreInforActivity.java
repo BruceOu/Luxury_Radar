@@ -31,6 +31,8 @@ public class MoreInforActivity extends Activity implements View.OnClickListener{
     private Uri imageUri;
     private Uri uritempFile;
     private Button btnSubmit, btnCrop;
+    private DatabaseHelper db = new DatabaseHelper(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +54,7 @@ public class MoreInforActivity extends Activity implements View.OnClickListener{
         btnSubmit.setOnClickListener(this);
         btnCrop = (Button) findViewById(R.id.cropBtn);
         btnCrop.setOnClickListener(this);
+
     }
 
     public void addItemsOnSpinner() {
@@ -134,7 +137,8 @@ public class MoreInforActivity extends Activity implements View.OnClickListener{
     }
 
     private void submitForResult(){
-
+        Intent viewResultIntent = new Intent(this, ViewResultActivity.class);
+        startActivity(viewResultIntent);
     }
 
 }

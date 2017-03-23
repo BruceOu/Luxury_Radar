@@ -52,7 +52,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     }
 
     //retutrn a list containing all the shirtId that user recently searched, from the most recently one to the oldest one
-    public List<String> selectAllShirtId() {
+    public List<String> getAllShirtId() {
         SQLiteDatabase db=this.getWritableDatabase();
         List<String> list = new ArrayList<>();
         Cursor cursor=db.rawQuery("select * from "+TABLE_NAME, null);

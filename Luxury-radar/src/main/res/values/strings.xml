@@ -7,4 +7,5 @@
     <string name="style_prompt">Choose a style</string>
     <string name="gender_prompt">Choose gender</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_view_result">ViewResultActivity</string>
 </resources>

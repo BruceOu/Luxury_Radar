@@ -3,6 +3,7 @@
           package="haifanou.com.luxuryradar">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-premission android:name="android.permission.INTERENT" />
 
     <application
         android:allowBackup="true"
@@ -25,6 +26,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="haifanou.com.luxuryradar.CamaraIntentActivity"/>
+        </activity>
+        <activity
+            android:name=".ViewResultActivity"
+            android:label="Are you looking for this?"
+            android:parentActivityName=".MoreInforActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="haifanou.com.luxuryradar.MoreInforActivity"/>
         </activity>
     </application>
 
