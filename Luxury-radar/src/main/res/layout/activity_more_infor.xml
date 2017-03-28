@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_more_infor"
+    android:orientation="vertical"
+    android:background="@color/black"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="haifanou.com.luxuryradar.MoreInforActivity">
-
-    <ImageView
-        android:layout_height="match_parent"
+    android:textSize="15.5sp"
+    android:padding="20dip">
+    <LinearLayout
         android:layout_width="match_parent"
-        android:background="@drawable/background2"
-        android:alpha="0.2" />
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:weightSum="1">
 
-    <ImageView
+        <ImageView
         android:layout_width="match_parent"
-        android:layout_height="330dp"
+        android:layout_height="350dp"
         android:id="@+id/imageGalleryView"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
@@ -27,38 +23,43 @@
         android:layout_centerHorizontal="true"/>
 
 
-    <Spinner
+        <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/genderSpinner"
         android:layout_below="@+id/styleSpinner"
         android:prompt="@string/gender_prompt"
+        android:textAlignment="center"
         android:layout_alignParentStart="true"
         style="@android:style/Widget.Spinner"/>
 
     <Spinner
         android:id="@+id/styleSpinner"
         android:layout_width="match_parent"
+        android:textAlignment="center"
         android:layout_height="wrap_content"
         android:prompt="@string/style_prompt"
         android:layout_below="@+id/imageGalleryView"
         android:layout_alignParentStart="true"
         style="@android:style/Widget.Spinner"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/submitBtn"
-        android:text="submit"
-        android:layout_below="@+id/genderSpinner"
-        android:layout_alignEnd="@+id/imageGalleryView"/>
+        <Button
+            android:text="crop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/cropBtn"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="left"/>
 
-    <Button
-        android:text="crop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/cropBtn"
-        android:layout_alignParentStart="true"
-        android:layout_alignBottom="@+id/submitBtn"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/submitBtn"
+            android:text="submit"
+            android:layout_below="@+id/genderSpinner"
+            android:layout_alignParentEnd="true"/>
 
-</RelativeLayout>
+
+        </LinearLayout>>
+
+</ScrollView>

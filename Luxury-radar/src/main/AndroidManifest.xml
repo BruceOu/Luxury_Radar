@@ -3,16 +3,18 @@
           package="haifanou.com.luxuryradar">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-premission android:name="android.permission.INTERENT" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
             android:name=".CamaraIntentActivity"
-            android:label="Take or Choose a photo">
+            android:configChanges="orientation|screenSize"
+            android:label="Luxury Radar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -22,6 +24,7 @@
         <activity
             android:name=".MoreInforActivity"
             android:label="Tell us more"
+            android:configChanges="orientation|screenSize"
             android:parentActivityName=".CamaraIntentActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -29,6 +32,7 @@
         </activity>
         <activity
             android:name=".ViewResultActivity"
+            android:configChanges="orientation|screenSize"
             android:label="Are you looking for this?"
             android:parentActivityName=".MoreInforActivity">
             <meta-data

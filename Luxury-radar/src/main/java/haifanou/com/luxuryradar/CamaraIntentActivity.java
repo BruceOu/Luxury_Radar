@@ -26,10 +26,10 @@ public class CamaraIntentActivity extends Activity implements View.OnClickListen
     private static final String TAG = "CAM_Activity";
     private static final int CAM_REQUEST = 0;
     private static final int GALL_REQUEST = 1;
+    private static boolean fromCam=false;  //flag to save if the imageView is from Camera or Gallery
 
-    Button nextBtn;
+    private Button nextBtn;
     private ImageView photoImageView;
-    private boolean fromCam=false;
     private String mImageFileLocation = "";
     private Uri imageUri;
     private File photoFile;
@@ -42,6 +42,43 @@ public class CamaraIntentActivity extends Activity implements View.OnClickListen
         nextBtn.setEnabled(false);
         nextBtn.setOnClickListener(this);
         photoImageView = (ImageView) findViewById(R.id.imageGalleryView);
+    }
+
+    /*
+    function to save data (imageView)
+     */
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        if(photoImageView.getDrawable() != null) {
+            savedInstanceState.putBoolean("hasImage", true);
+            if (fromCam) {
+                savedInstanceState.putString("imageFileLocation", mImageFileLocation);
+            } else {
+                savedInstanceState.putString("imageUri", imageUri.toString());
+            }
+        }
+    }
+
+    /*
+    function to restore imageView
+     */
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+
+        super.onRestoreInstanceState(savedInstanceState);
+        if(savedInstanceState.getBoolean("hasImage")) {
+            if (fromCam) {
+                mImageFileLocation = savedInstanceState.getString("imageFileLocation");
+                File file = new File(mImageFileLocation);
+                imageUri = Uri.fromFile(file);
+            } else {
+                imageUri = Uri.parse(savedInstanceState.getString("imageUri"));
+            }
+            photoImageView.setImageURI(imageUri);
+            nextBtn.setEnabled(true);
+        }
+
     }
 
     @Override
@@ -73,6 +110,7 @@ public class CamaraIntentActivity extends Activity implements View.OnClickListen
     }
 
     private void openGallery() {
+        fromCam = false;
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         startActivityForResult(gallery, GALL_REQUEST);
     }
@@ -90,16 +128,15 @@ public class CamaraIntentActivity extends Activity implements View.OnClickListen
         callCameraApplicationIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
 
         startActivityForResult(callCameraApplicationIntent, CAM_REQUEST);
+        fromCam=true;
     }
 
     protected void onActivityResult (int requestCode, int resultCode, Intent data) {
         if(requestCode == CAM_REQUEST && resultCode == RESULT_OK) {
-            fromCam=true;
             Bitmap photoReducedSizeBitmp = BitmapFactory.decodeFile(mImageFileLocation);
             photoImageView.setImageBitmap(photoReducedSizeBitmp);
             nextBtn.setEnabled(true);
         } else if(requestCode== GALL_REQUEST && resultCode == RESULT_OK) {
-            fromCam = false;
             imageUri = data.getData();
             photoImageView.setImageURI(imageUri);
             nextBtn.setEnabled(true);

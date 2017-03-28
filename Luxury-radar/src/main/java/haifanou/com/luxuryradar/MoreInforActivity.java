@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Base64;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -16,22 +19,40 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class MoreInforActivity extends Activity implements View.OnClickListener{
 
     private final static int CROP_REQUEST=3;
+    private static String shirtUrl;
+    private static boolean crop=false;
+
     private Spinner genderSpinner, styleSpinner;
     private String mImageFileLocation;
     private ImageView imageView;
     private Uri imageUri;
-    private Uri uritempFile;
+    private Uri cropImageUri;
+    private String encoded_string;
+    private Bitmap bitmap;
     private Button btnSubmit, btnCrop;
-    private DatabaseHelper db = new DatabaseHelper(this);
+    private Intent viewResultIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +78,7 @@ public class MoreInforActivity extends Activity implements View.OnClickListener{
 
     }
 
+
     public void addItemsOnSpinner() {
 
         genderSpinner = (Spinner) findViewById(R.id.genderSpinner);
@@ -66,7 +88,7 @@ public class MoreInforActivity extends Activity implements View.OnClickListener{
         list.add("men&women");
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, list);
-        dataAdapter.setDropDownViewResource(    android.R.layout.simple_spinner_dropdown_item);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         genderSpinner.setAdapter(dataAdapter);
 
         styleSpinner= (Spinner) findViewById(R.id.styleSpinner);
@@ -115,10 +137,11 @@ public class MoreInforActivity extends Activity implements View.OnClickListener{
             cropIntent.putExtra("aspectX", 3);
             cropIntent.putExtra("aspectY", 4);
 
-            uritempFile = Uri.parse("file://" + "/" + Environment.getExternalStorageDirectory().getPath() + "/" + "small.jpg");
-            cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, uritempFile);
+            cropImageUri = Uri.parse("file://" + "/" + Environment.getExternalStorageDirectory().getPath() + "/" + "small.jpg");
+            cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, cropImageUri);
             cropIntent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
 
+            crop=true;
             startActivityForResult(cropIntent, CROP_REQUEST);
         }catch (ActivityNotFoundException e){
             e.printStackTrace();
@@ -128,7 +151,8 @@ public class MoreInforActivity extends Activity implements View.OnClickListener{
     protected void onActivityResult (int requestCode, int resultCode, Intent data) {
         if(requestCode == CROP_REQUEST && resultCode == RESULT_OK) {
             try {
-                Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uritempFile));
+                crop=true;
+                bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(cropImageUri));
                 imageView.setImageBitmap(bitmap);
             }catch(FileNotFoundException fe){
                 fe.printStackTrace();
@@ -137,8 +161,72 @@ public class MoreInforActivity extends Activity implements View.OnClickListener{
     }
 
     private void submitForResult(){
-        Intent viewResultIntent = new Intent(this, ViewResultActivity.class);
-        startActivity(viewResultIntent);
+        new Encode_image().execute();
     }
+
+    private class Encode_image extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                if(crop) {
+                    bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(cropImageUri));
+                }else{
+                    bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            bitmap.recycle();
+
+            byte[] array = stream.toByteArray();
+            encoded_string = Base64.encodeToString(array, 0);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            makeRequest();
+        }
+    }
+
+    private void makeRequest() {
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        StringRequest request = new StringRequest(Request.Method.POST, "http://huangwc94.pythonanywhere.com",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            String jsonData = response.toString();
+                            JSONObject Jobject = new JSONObject(jsonData);
+                            shirtUrl =Jobject.getString("url");
+                            viewResultIntent=new Intent(MoreInforActivity.this, ViewResultActivity.class);
+                            viewResultIntent.putExtra("shirtUrl", shirtUrl);
+                            startActivity(viewResultIntent);
+
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("TAG", error.toString());
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String,String> map = new HashMap<>();
+                map.put("encoded_string",encoded_string);
+
+                return map;
+            }
+        };
+        requestQueue.add(request);
+    }
+
+
 
 }
