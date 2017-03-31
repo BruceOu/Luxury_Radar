@@ -1,9 +1,12 @@
 package haifanou.com.luxuryradar;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -41,6 +45,7 @@ import java.util.Map;
 public class MoreInforActivity extends Activity implements View.OnClickListener{
 
     private final static int CROP_REQUEST=3;
+    public static final String PYTHON_SERVER_ADDRESS = "http://huangwc94.pythonanywhere.com";
     private static String shirtUrl;
     private static boolean crop=false;
 
@@ -53,6 +58,7 @@ public class MoreInforActivity extends Activity implements View.OnClickListener{
     private Bitmap bitmap;
     private Button btnSubmit, btnCrop;
     private Intent viewResultIntent;
+    private Encode_image mEncode_image=new Encode_image();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +82,24 @@ public class MoreInforActivity extends Activity implements View.OnClickListener{
         btnCrop = (Button) findViewById(R.id.cropBtn);
         btnCrop.setOnClickListener(this);
 
+    }
+
+    //method to check if network is available to use
+    private boolean checkNetWorkAvailability(){
+        ConnectivityManager connectivityManager	=
+                (ConnectivityManager)	getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo	=
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        boolean isConnected	=	true;
+        boolean isWifiAvailable	=	networkInfo.isAvailable();
+        boolean isWifiConnected	=	networkInfo.isConnected();
+        networkInfo	=
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        boolean isMobileAvailable	=	networkInfo.isAvailable();
+        boolean isMobileConnnected	=	networkInfo.isConnected();
+        isConnected	=	(isMobileAvailable&&isMobileConnnected)	||
+                (isWifiAvailable&&isWifiConnected);
+        return(isConnected);
     }
 
 
@@ -117,7 +141,11 @@ public class MoreInforActivity extends Activity implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.submitBtn:
-                submitForResult();
+                if(checkNetWorkAvailability()) {
+                    submitForResult();
+                }else{
+                    Toast.makeText(this, "Network is unavailable, please connect your device to network before clicking submit", Toast.LENGTH_LONG).show();
+                }
                 break;
             case R.id.cropBtn:
                 cropImage();
@@ -161,7 +189,14 @@ public class MoreInforActivity extends Activity implements View.OnClickListener{
     }
 
     private void submitForResult(){
-        new Encode_image().execute();
+        mEncode_image.execute();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mEncode_image.cancel(true);
+
     }
 
     private class Encode_image extends AsyncTask<Void, Void, Void> {
@@ -194,7 +229,7 @@ public class MoreInforActivity extends Activity implements View.OnClickListener{
 
     private void makeRequest() {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest request = new StringRequest(Request.Method.POST, "http://huangwc94.pythonanywhere.com",
+        StringRequest request = new StringRequest(Request.Method.POST, PYTHON_SERVER_ADDRESS,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -204,6 +239,7 @@ public class MoreInforActivity extends Activity implements View.OnClickListener{
                             shirtUrl =Jobject.getString("url");
                             viewResultIntent=new Intent(MoreInforActivity.this, ViewResultActivity.class);
                             viewResultIntent.putExtra("shirtUrl", shirtUrl);
+                            mEncode_image.cancel(true);
                             startActivity(viewResultIntent);
 
                         }catch(Exception e){
