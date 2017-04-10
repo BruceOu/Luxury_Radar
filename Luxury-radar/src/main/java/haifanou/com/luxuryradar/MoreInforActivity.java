@@ -237,8 +237,10 @@ public class MoreInforActivity extends Activity implements View.OnClickListener{
                             String jsonData = response.toString();
                             JSONObject Jobject = new JSONObject(jsonData);
                             shirtUrl =Jobject.getString("url");
+
                             viewResultIntent=new Intent(MoreInforActivity.this, ViewResultActivity.class);
                             viewResultIntent.putExtra("shirtUrl", shirtUrl);
+                            viewResultIntent.putExtra("id",Jobject.getString("id"));
                             mEncode_image.cancel(true);
                             startActivity(viewResultIntent);
 

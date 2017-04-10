@@ -21,6 +21,10 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     public static final String TABLE_NAME="shirt_infor_table";
     public static final String COL_1="no";
     public static final String COL_2="shirtId";
+    public static final String COL_3 = "Name";
+    public static final String COL_4 = "Brand";
+    public static final String COL_5 = "Price";
+    public static final String COL_6 = "img";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -39,10 +43,15 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         onCreate(db);
     }
 
-    public boolean insertData(String shirtId){
+    public boolean insertData(Shirt s){
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues contentValues=new ContentValues();
-        contentValues.put(COL_2, shirtId);
+        contentValues.put(COL_2,s.shirtId);
+        contentValues.put(COL_3,s.name);
+        contentValues.put(COL_4,s.brand);
+        contentValues.put(COL_5,s.price);
+        contentValues.put(COL_6,s.img);
+
         long result = db.insert(TABLE_NAME, null, contentValues);
         if(result==-1) {
             return false;

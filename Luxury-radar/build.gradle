@@ -1,3 +1,13 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.3'
+    }
+}
+
 apply plugin: 'com.android.application'
 
 android {
@@ -18,11 +28,14 @@ android {
         }
     }
 }
-
+repositories {
+    mavenCentral()
+    jcenter()
+}
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:recyclerview-v7:22.2.1'
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.mcxiaoke.volley:library:1.0.19'
-    compile 'com.squareup.okhttp3:mockwebserver:3.6.0'
+    compile 'com.squareup.okhttp3:okhttp:3.6.0'
 }

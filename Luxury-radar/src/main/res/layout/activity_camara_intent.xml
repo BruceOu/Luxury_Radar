@@ -13,17 +13,17 @@
         android:layout_height="wrap_content"
         android:weightSum="1">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:id="@+id/imageGalleryView"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_alignParentEnd="true"
-        android:layout_above="@+id/nextButton"
-        android:layout_alignParentTop="true"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:id="@+id/imageGalleryView"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentEnd="true"
+            android:layout_above="@+id/nextButton"
+            android:layout_alignParentTop="true"/>
 
-    <Button
+        <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Next"
@@ -33,6 +33,7 @@
         android:layout_gravity="right"
         android:layout_marginRight="15dp"
         android:layout_alignEnd="@+id/imageGalleryView"/>
+
     </LinearLayout>
 
 
